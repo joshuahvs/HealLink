@@ -19,3 +19,28 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.gradient-background {
+  background: linear-gradient(90deg, #3C70FF, #3CA1FF);
+}
+
+h1 {
+  @apply text-h1-mob lg:text-h1;
+}
+
+h2 {
+  @apply text-h2-mob lg:text-h2;
+}
+
+h3 {
+  @apply text-h3-mob lg:text-h3;
+}
+
+h4 {
+  @apply text-h4-mob lg:text-h4;
+}
+
+p {
+  @apply text-lg-mob lg:text-lg;
+}
+

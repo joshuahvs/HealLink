@@ -13,9 +13,13 @@ export default {
         foreground: "var(--foreground)",
         darkblue: '#3C70FF',
         blue: '#3CA1FF',
-        lightblue: '3CA1FF',
-        green: '9FE076',
+        lightblue: '#3CA1FF',
+        green: '#9FE076',
       },
+
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+      },      
 
       fontSize: {
         'h1': '64px',
