@@ -1,0 +1,210 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+}
+
+model User {
+  id            String       @id @default(cuid())
+  name          String
+  email         String       @unique
+  password      String
+  image         String?
+  role          Role         @default(USER)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  
+  // Relations
+  donations     Donation[]
+  subscriptions Subscription[]
+  projects      Project[]    // Admin can create/manage projects
+  company       Company? 
+  paymentHistories PaymentHistory[]
+  volunteer     Volunteer?
+}
+
+enum Role {
+  USER
+  COMPANY
+  MODERATOR
+}
+
+model Donation {
+  id            String         @id @default(cuid())
+  userId        String
+  amount        Float
+  projectId     String?
+  message       String?
+  isAnonymous   Boolean        @default(false)
+  status        PaymentStatus  @default(PENDING)
+  createdAt     DateTime       @default(now())
+  
+  user          User           @relation(fields: [userId], references: [id])
+  project       Project?       @relation(fields: [projectId], references: [id])
+  paymentHistory PaymentHistory?
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model PaymentHistory {
+  id            String        @id @default(cuid())
+  userId        String
+  amount        Float
+  paymentMethod String
+  transactionId String        @unique
+  status        PaymentStatus
+  donationId    String?       @unique
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  user          User          @relation(fields: [userId], references: [id])
+  donation      Donation?     @relation(fields: [donationId], references: [id])
+}
+
+model FundUsage {
+  id          String    @id @default(cuid())
+  projectId   String
+  amount      Float
+  description String
+  date        DateTime
+  category    String
+  receiptUrl  String?   // URL to receipt image if available
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  project     Project   @relation(fields: [projectId], references: [id])
+}
+
+model Subscription {
+  id              String    @id @default(cuid())
+  userId          String
+  amount          Float
+  frequency       SubscriptionFrequency
+  status          SubscriptionStatus @default(ACTIVE)
+  nextBillingDate DateTime
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  user            User      @relation(fields: [userId], references: [id])
+}
+
+enum SubscriptionFrequency {
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+}
+
+model Project {
+  id            String    @id @default(cuid())
+  name          String
+  description   String
+  targetAmount  Float
+  currentAmount Float     @default(0)
+  startDate     DateTime
+  endDate       DateTime?
+  status        ProjectStatus
+  location      String
+  latitude      Float?
+  longitude     Float?
+  imageUrl      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  createdById   String    // Admin who created the project
+  
+  createdBy     User      @relation(fields: [createdById], references: [id])
+  donations     Donation[]
+  partnerships  CompanyPartnership[]
+  fundUsages    FundUsage[]
+
+  // Define relation to Volunteer
+  volunteers    Volunteer[] @relation("ProjectVolunteers")
+}
+
+enum ProjectStatus {
+  PLANNED
+  ONGOING
+  COMPLETED
+}
+
+model Volunteer {
+  id             String           @id @default(cuid())
+  userId         String           @unique
+  specialization String           // Spesialisasi medis (dokter umum, perawat, dll)
+  experience     String           // Pengalaman (dalam tahun atau deskripsi)
+  availability   String           // Ketersediaan waktu
+  status         VolunteerStatus  @default(ACTIVE)
+  location       String           // Lokasi relawan (kabupaten/kota)
+  latitude       Float?           // Koordinat untuk pemetaan
+  longitude      Float?           // Koordinat untuk pemetaan
+  contactPhone   String?          // Nomor kontak darurat
+  medicalLicense String?          // Nomor lisensi medis (opsional)
+  bio            String?          // Deskripsi singkat
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  
+  user           User             @relation(fields: [userId], references: [id])
+  
+  // Relasi ke Project (opsional, volunteer bisa belum ditugaskan ke project)
+  projectId      String?
+  project        Project?         @relation("ProjectVolunteers", fields: [projectId], references: [id])
+}
+
+enum VolunteerStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Company {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  logoUrl      String?
+  contactName  String
+  contactPhone String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  userId       String    @unique  // Make userId unique
+  user         User      @relation(fields: [userId], references: [id])  // Relasi ke User
+  
+  partnerships CompanyPartnership[]
+}
+
+
+model CompanyPartnership {
+  id        String    @id @default(cuid())
+  companyId String
+  projectId String
+  amount    Float
+  startDate DateTime
+  endDate   DateTime?
+  status    PartnershipStatus @default(ACTIVE)
+
+  brandRepresented String?          
+  industryCategory String?          
+  objective        String?           
+  
+  company   Company   @relation(fields: [companyId], references: [id])
+  project   Project   @relation(fields: [projectId], references: [id])
+}
+
+enum PartnershipStatus {
+  ONREVIEW
+  ACTIVE
+  COMPLETED
+  REJECTED
+}
