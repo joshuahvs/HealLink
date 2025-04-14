@@ -3,20 +3,34 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 
 export default function Navbar() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Ganti dengan logika autentikasi
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav>
+    <nav className="flex items-center justify-between px-6 py-4">
+      <div className="flex items-center px-4">
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/HealLink-blue.svg"
+            alt="HealLink Logo"
+            width={140}
+            height={40}
+            className="h-7 w-auto"
+          />
+        </Link>
+      </div>
+
       <button
-        className="md:hidden"
+        className="md:hidden text-gray-600 hover:text-blue-600"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
+
       <div
         className={`${
           isOpen ? 'block' : 'hidden'
@@ -34,7 +48,7 @@ export default function Navbar() {
         <Link href="/blog" className="block md:inline text-gray-600 hover:text-blue-600 py-2 md:py-0">
           Blog
         </Link>
-        <Link href="/donation" className="block md:inline text-gray-600 hover:text-blue-600 py-2 md:py-0">
+        <Link href="/donations" className="block md:inline text-gray-600 hover:text-blue-600 py-2 md:py-0">
           Donasi
         </Link>
         <Link href="/volunteer" className="block md:inline text-gray-600 hover:text-blue-600 py-2 md:py-0">
