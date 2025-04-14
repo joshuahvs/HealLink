@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "next-auth/react";
 import { AlertCircle, ArrowLeft, Upload, Check } from "lucide-react";
+import Image from 'next/image';
 
 export default function CompanyProfileForm() {
   const router = useRouter();
@@ -223,7 +224,13 @@ export default function CompanyProfileForm() {
                   />
                   {formData.logoUrl && (
                     <div className="mt-2">
-                      <img src={formData.logoUrl} alt="Logo Perusahaan" className="w-32 h-32 object-cover" />
+                      <Image
+                          src={formData.logoUrl}
+                          alt="Logo Perusahaan"
+                          width={128} 
+                          height={128} 
+                          className="object-cover"
+                        />
                     </div>
                   )}
                 </div>

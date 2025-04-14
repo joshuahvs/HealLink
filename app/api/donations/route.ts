@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
+import { Prisma, PaymentStatus } from '@prisma/client'; // Import PaymentStatus enum
 
 // GET - Fetch all donations (with pagination and filtering)
 export async function GET(req: NextRequest) {
@@ -14,11 +15,11 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const skip = (page - 1) * limit;
 
-    // Build where clause based on query parameters
-    const where: any = {};
+    // Build where clause with specific type
+    const where: Prisma.DonationWhereInput = {};
     if (projectId) where.projectId = projectId;
     if (userId) where.userId = userId;
-    if (status) where.status = status;
+    if (status) where.status = status as PaymentStatus; // Use PaymentStatus enum directly
 
     // Get donations with pagination
     const donations = await prisma.donation.findMany({
@@ -85,9 +86,9 @@ export async function POST(req: NextRequest) {
         data: {
           userId: session.user.id,
           amount,
-          paymentMethod: 'CREDIT_CARD', // Dummy payment method
-          transactionId: `TR-${Date.now()}`, // Generate dummy transaction ID
-          status: 'COMPLETED', // Assuming payment is successful
+          paymentMethod: 'CREDIT_CARD',
+          transactionId: `TR-${Date.now()}`,
+          status: 'COMPLETED',
         },
       });
 
@@ -99,7 +100,7 @@ export async function POST(req: NextRequest) {
           amount,
           message,
           isAnonymous: isAnonymous || false,
-          status: 'COMPLETED', // Since it's a dummy payment, we mark it as completed
+          status: 'COMPLETED',
         },
       });
 

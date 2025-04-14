@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import * as bcrypt from 'bcrypt';
 
 // GET - Mengambil semua data user
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const users = await prisma.user.findMany({
       select: {
@@ -22,7 +22,6 @@ export async function GET(req: NextRequest) {
         }
       }
     });
-    
     return NextResponse.json(users);
   } catch (error) {
     console.error('Error fetching users:', error);

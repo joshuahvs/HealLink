@@ -1,8 +1,8 @@
-// app/api/projects/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma"; // Use the correct Prisma client import
+import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
+import { Prisma, ProjectStatus } from "@prisma/client"; // Import Prisma and ProjectStatus enum
 
 // Get all projects
 export async function GET(req: NextRequest) {
@@ -11,15 +11,15 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get("status");
     const location = searchParams.get("location");
 
-    // Build filters
-    const filters: any = {};
+    // Build filters with specific type
+    const filters: Prisma.ProjectWhereInput = {};
     if (status) {
-      filters.status = status;
+      filters.status = status as ProjectStatus; // Cast to ProjectStatus enum
     }
     if (location) {
       filters.location = {
         contains: location,
-        mode: 'insensitive'
+        mode: "insensitive",
       };
     }
 
@@ -28,20 +28,19 @@ export async function GET(req: NextRequest) {
       include: {
         volunteers: {
           include: {
-            user: true
-          }
+            user: true,
+          },
         },
         partnerships: {
           include: {
-            company: true
-          }
-        }
+            company: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
-    
 
     return NextResponse.json(projects);
   } catch (error) {
@@ -54,23 +53,23 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== "MODERATOR") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     const body = await req.json();
-    const { 
-      name, 
-      description, 
-      targetAmount, 
-      startDate, 
-      endDate, 
-      status, 
+    const {
+      name,
+      description,
+      targetAmount,
+      startDate,
+      endDate,
+      status,
       location,
       latitude,
       longitude,
-      imageUrl
+      imageUrl,
     } = body;
 
     // Validation
@@ -85,13 +84,13 @@ export async function POST(req: NextRequest) {
         targetAmount: parseFloat(targetAmount),
         startDate: new Date(startDate),
         endDate: endDate ? new Date(endDate) : null,
-        status,
+        status: status as ProjectStatus, // Cast to ProjectStatus enum
         location,
         latitude: latitude ? parseFloat(latitude) : null,
         longitude: longitude ? parseFloat(longitude) : null,
         imageUrl,
-        createdById: session.user.id
-      }
+        createdById: session.user.id,
+      },
     });
 
     return NextResponse.json(project);

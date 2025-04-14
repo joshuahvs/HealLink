@@ -1,9 +1,29 @@
-import { PrismaAdapter } from "@auth/prisma-adapter"
+import { PrismaAdapter } from "@next-auth/prisma-adapter";  // Changed from "@auth/prisma-adapter"
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 import { prisma } from "@/lib/prisma";
 import { NextAuthOptions } from "next-auth";
+import { Role } from "@prisma/client";
+
+// For the JWT token
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      role: Role;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    }
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    role?: Role;
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -39,7 +59,7 @@ export const authOptions: NextAuthOptions = {
     // Inject role into the JWT token
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as any).role; // pastikan role ada di model User
+        token.role = user.role;
       }
       return token;
     },
@@ -47,8 +67,8 @@ export const authOptions: NextAuthOptions = {
     // Inject role into session so it's accessible on client
     async session({ session, token }) {
       if (token && session.user) {
-        (session.user as any).id = token.sub!;
-        (session.user as any).role = token.role; // inject role to session
+        session.user.id = token.sub!;
+        session.user.role = token.role as Role;
       }
       return session;
     },

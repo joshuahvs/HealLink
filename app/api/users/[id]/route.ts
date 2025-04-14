@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from "@/lib/prisma";
 import * as bcrypt from 'bcrypt';
 
+// Assuming 'Role' is the enum type in your Prisma schema for 'role'
+import { Role } from '@prisma/client'; 
+
+// Define a type for the update fields
+type UpdateUserData = {
+  name?: string;
+  email?: string;
+  password?: string;
+  image?: string | null;
+  role?: Role;  // Use the Role enum type for 'role'
+};
+
 // GET - Mengambil detail user berdasarkan ID
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -20,11 +32,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         volunteer: true,
       },
     });
-    
+
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-    
+
     return NextResponse.json(user);
   } catch (error) {
     console.error('Error fetching user:', error);
@@ -37,14 +49,15 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   try {
     const body = await req.json();
     const { name, email, password, image, role } = body;
-    
-    const updateData: any = {};
+
+    // Use the UpdateUserData type instead of any
+    const updateData: UpdateUserData = {};
     if (name) updateData.name = name;
     if (email) updateData.email = email;
     if (password) updateData.password = await bcrypt.hash(password, 10);
     if (image !== undefined) updateData.image = image;
-    if (role) updateData.role = role;
-    
+    if (role) updateData.role = role as Role;  // Explicitly cast 'role' to 'Role' enum
+
     const user = await prisma.user.update({
       where: { id: params.id },
       data: updateData,
@@ -58,7 +71,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         updatedAt: true,
       },
     });
-    
+
     return NextResponse.json(user);
   } catch (error) {
     console.error('Error updating user:', error);
@@ -72,7 +85,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     await prisma.user.delete({
       where: { id: params.id },
     });
-    
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting user:', error);
