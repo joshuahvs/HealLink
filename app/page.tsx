@@ -5,8 +5,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronDown, Heart, PieChart, Users, MapPin } from 'lucide-react';
-import Header from '../app/components/Header';
+// import Header from '../app/components/Header';
 import Footer from '../app/components/Footer';
+import Navbar from './components/Navbar';
 
 export default function HomePage() {
   const [isAuthenticated] = useState(false);
@@ -24,8 +25,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-section">
-      <Header />
-
+      <Navbar />
       {/* Hero Section */}
       <div className="bg-gradient-hero text-white py-20">
         <div className="container flex flex-col md:flex-row items-center">
