@@ -1,175 +1,241 @@
-// app/volunteers/page.tsx
-import { GetServerSideProps } from 'next';
-import Head from 'next/head';
-import Link from 'next/link';
-import { authOptions } from '@/lib/authOptions';
-import { getServerSession } from 'next-auth';
-import Navbar from '../components/Navbar';
+"use client";
 
-const VolunteerInfo = async () => {
-    const session = await getServerSession(authOptions);
-  
-    return (
-      <div className="bg-gray-50 min-h-screen">
-        <Navbar />
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  MapPin,
+  Users,
+  Calendar,
+  Clock,
+  Search,
+  Filter,
+  ArrowRight,
+} from "lucide-react";
+import Navbar from "../components/Navbar";
 
-      <main className="container mx-auto px-4 py-8">
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Tentang Program Relawan Medis</h2>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <p className="text-gray-700 mb-4">
-              Program Relawan Medis HealLink adalah inisiatif yang bertujuan menghubungkan tenaga medis sukarelawan 
-              dengan masyarakat di daerah terpencil Indonesia yang memiliki keterbatasan akses layanan kesehatan.
-            </p>
-            <p className="text-gray-700 mb-4">
-              Sebagai relawan, Anda akan memiliki kesempatan untuk:
-            </p>
-            <ul className="list-disc pl-5 mb-4 text-gray-700">
-              <li className="mb-2">Memberikan pelayanan kesehatan langsung kepada masyarakat yang membutuhkan</li>
-              <li className="mb-2">Berpartisipasi dalam klinik keliling yang menjangkau daerah terpencil</li>
-              <li className="mb-2">Berbagi pengetahuan dan keterampilan dengan tenaga medis lokal</li>
-              <li className="mb-2">Meningkatkan kesadaran kesehatan melalui program edukasi</li>
-              <li className="mb-2">Menjadi bagian dari solusi untuk mengatasi kesenjangan layanan kesehatan di Indonesia</li>
-            </ul>
+// Dummy data for volunteer opportunities
+const dummyOpportunities = [
+  {
+    id: 1,
+    title: "Bantuan Medis Daerah Terpencil",
+    description:
+      "Dibutuhkan relawan tenaga medis untuk program bantuan kesehatan di daerah terpencil.",
+    location: "Nusa Tenggara Timur",
+    category: "Tenaga Medis",
+    requiredVolunteers: 10,
+    currentVolunteers: 5,
+    duration: "3 bulan",
+    startDate: "1 Mei 2025",
+    imageUrl:
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800",
+    skills: ["Dokter", "Perawat", "Bidan"],
+  },
+  {
+    id: 2,
+    title: "Program Vaksinasi Anak",
+    description:
+      "Mencari relawan untuk membantu program vaksinasi anak-anak di daerah urban.",
+    location: "Jakarta Timur",
+    category: "Kesehatan",
+    requiredVolunteers: 15,
+    currentVolunteers: 8,
+    duration: "1 bulan",
+    startDate: "15 Mei 2025",
+    imageUrl:
+      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800",
+    skills: ["Perawat", "Administrasi", "Koordinator"],
+  },
+  {
+    id: 3,
+    title: "Pengobatan Gratis Lansia",
+    description:
+      "Program pengobatan gratis untuk lansia membutuhkan relawan medis dan non-medis.",
+    location: "Surabaya",
+    category: "Kesehatan",
+    requiredVolunteers: 20,
+    currentVolunteers: 12,
+    duration: "2 bulan",
+    startDate: "1 Juni 2025",
+    imageUrl:
+      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800",
+    skills: ["Dokter", "Perawat", "Koordinator"],
+  },
+];
+
+// Dummy categories
+const categories = [
+  "Semua",
+  "Tenaga Medis",
+  "Non-Medis",
+  "Administrasi",
+  "Koordinator",
+  "Logistik",
+];
+
+export default function VolunteersPage() {
+  const router = useRouter();
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      {/* Hero Section */}
+      <div className="bg-blue-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl font-bold mb-4">Relawan Kesehatan</h1>
+          <p className="text-xl text-blue-100 max-w-2xl">
+            Bergabunglah menjadi relawan dan bantu kami memberikan pelayanan
+            kesehatan yang lebih baik untuk masyarakat.
+          </p>
+          <div className="mt-8">
+            <Link
+              href="/volunteers/register"
+              className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition-colors"
+            >
+              Daftar Sebagai Relawan
+            </Link>
           </div>
-        </section>
-
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Bagaimana Cara Kerjanya?</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-4">
-                <span className="text-teal-600 text-xl font-bold">1</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-800">Daftar</h3>
-              <p className="text-gray-700">
-                Isi formulir pendaftaran dengan informasi tentang latar belakang medis, spesialisasi, 
-                dan ketersediaan Anda.
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-4">
-                <span className="text-teal-600 text-xl font-bold">2</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-800">Pilih Proyek</h3>
-              <p className="text-gray-700">
-                Pilih proyek yang sesuai dengan keahlian dan ketersediaan Anda. Kami memiliki berbagai 
-                program di seluruh Indonesia.
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-4">
-                <span className="text-teal-600 text-xl font-bold">3</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-800">Berikan Dampak</h3>
-              <p className="text-gray-700">
-                Bergabunglah dengan tim HealLink di lapangan dan berikan pelayanan kesehatan berkualitas 
-                kepada masyarakat yang membutuhkan.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Siapa yang Dapat Menjadi Relawan?</h2>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <p className="text-gray-700 mb-4">
-              Kami menerima berbagai tenaga medis profesional dengan kualifikasi yang sesuai:
-            </p>
-            <ul className="grid md:grid-cols-2 gap-4 text-gray-700">
-              <li className="flex items-center">
-                <span className="w-4 h-4 mr-2 bg-teal-500 rounded-full"></span>
-                Dokter (umum dan spesialis)
-              </li>
-              <li className="flex items-center">
-                <span className="w-4 h-4 mr-2 bg-teal-500 rounded-full"></span>
-                Perawat
-              </li>
-              <li className="flex items-center">
-                <span className="w-4 h-4 mr-2 bg-teal-500 rounded-full"></span>
-                Bidan
-              </li>
-              <li className="flex items-center">
-                <span className="w-4 h-4 mr-2 bg-teal-500 rounded-full"></span>
-                Apoteker dan Asisten Apoteker
-              </li>
-              <li className="flex items-center">
-                <span className="w-4 h-4 mr-2 bg-teal-500 rounded-full"></span>
-                Ahli Gizi
-              </li>
-              <li className="flex items-center">
-                <span className="w-4 h-4 mr-2 bg-teal-500 rounded-full"></span>
-                Teknisi Laboratorium
-              </li>
-              <li className="flex items-center">
-                <span className="w-4 h-4 mr-2 bg-teal-500 rounded-full"></span>
-                Ahli Kesehatan Masyarakat
-              </li>
-              <li className="flex items-center">
-                <span className="w-4 h-4 mr-2 bg-teal-500 rounded-full"></span>
-                Mahasiswa Kedokteran Tingkat Akhir
-              </li>
-            </ul>
-            <p className="text-gray-700 mt-4">
-              Semua relawan harus memiliki lisensi atau sertifikasi yang sesuai dan valid di Indonesia.
-            </p>
-          </div>
-        </section>
-
-        <div className="bg-teal-50 p-6 rounded-lg shadow-md mb-12">
-        <h2 className="text-2xl font-bold text-teal-700 mb-4">Siap Berkontribusi?</h2>
-        <p className="text-teal-800 mb-6">
-          Jadilah bagian dari perubahan. Bergabunglah dengan kami untuk membantu masyarakat yang membutuhkan 
-          akses ke layanan kesehatan.
-        </p>
-        {session ? (
-          <Link 
-            href="/volunteers/register" 
-            className="inline-block bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
-            Daftar Sekarang
-          </Link>
-        ) : (
-          <Link 
-            href="/auth/signin" 
-            className="inline-block bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
-            Masuk untuk Daftar
-          </Link>
-        )}
+        </div>
       </div>
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Peta Relawan HealLink</h2>
-          <p className="text-gray-700 mb-4">
-            Lihat di mana relawan medis HealLink berada saat ini.
-          </p>
-          <Link 
-            href="/volunteers/map" 
-            className="inline-block bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition duration-200">
-            Lihat Peta Relawan
-          </Link>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Pertanyaan Umum</h2>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold mb-2 text-gray-800">Berapa lama komitmen waktu yang dibutuhkan?</h3>
-              <p className="text-gray-700">
-                HealLink menawarkan berbagai pilihan komitmen, mulai dari beberapa hari hingga beberapa minggu. 
-                Anda dapat memilih proyek yang sesuai dengan ketersediaan Anda.
-              </p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Search and Filter */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                placeholder="Cari kesempatan relawan..."
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <Search
+                className="absolute left-3 top-2.5 text-gray-400"
+                size={20}
+              />
             </div>
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold mb-2 text-gray-800">Apakah biaya perjalanan dan akomodasi ditanggung?</h3>
-              <p className="text-gray-700">
-                Biaya perjalanan dan akomodasi untuk relawan yang ditempatkan di luar daerah asal akan ditanggung oleh HealLink.
-              </p>
+            <div className="flex gap-4">
+              <button className="px-4 py-2 border rounded-lg hover:bg-gray-50 flex items-center gap-2">
+                <Filter size={20} className="text-gray-500" />
+                <span>Filter</span>
+              </button>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Terapkan
+              </button>
             </div>
           </div>
-        </section>
-      </main>
+
+          {/* Categories */}
+          <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
+            {categories.map((category, index) => (
+              <button
+                key={index}
+                className={`px-4 py-2 rounded-full text-sm whitespace-nowrap
+                  ${
+                    index === 0
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Opportunities Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {dummyOpportunities.map((opportunity) => (
+            <div
+              key={opportunity.id}
+              className="bg-white rounded-lg shadow-sm overflow-hidden"
+            >
+              <div className="h-48 overflow-hidden">
+                <img
+                  src={opportunity.imageUrl}
+                  alt={opportunity.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-6">
+                <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                  <MapPin size={16} />
+                  <span>{opportunity.location}</span>
+                </div>
+                <h3 className="text-lg font-semibold mb-2">
+                  {opportunity.title}
+                </h3>
+                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                  {opportunity.description}
+                </p>
+
+                {/* Required Skills */}
+                <div className="mb-4 flex flex-wrap gap-2">
+                  {opportunity.skills.map((skill, index) => (
+                    <span
+                      key={index}
+                      className="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Stats */}
+                <div className="flex flex-col gap-2 text-sm text-gray-500 mb-4">
+                  <div className="flex items-center gap-2">
+                    <Users size={16} />
+                    <span>
+                      {opportunity.currentVolunteers} dari{" "}
+                      {opportunity.requiredVolunteers} relawan
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar size={16} />
+                    <span>Mulai {opportunity.startDate}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock size={16} />
+                    <span>Durasi: {opportunity.duration}</span>
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <button
+                  onClick={() =>
+                    router.push(
+                      `/volunteers/register?opportunity=${opportunity.id}`
+                    )
+                  }
+                  className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2"
+                >
+                  Daftar Sekarang
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Pagination */}
+        <div className="mt-8 flex justify-center">
+          <nav className="flex gap-2">
+            <button className="px-4 py-2 border rounded-lg hover:bg-gray-50 text-gray-500">
+              Previous
+            </button>
+            <button className="px-4 py-2 border rounded-lg bg-blue-50 text-blue-600 font-medium">
+              1
+            </button>
+            <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">
+              2
+            </button>
+            <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">
+              3
+            </button>
+            <button className="px-4 py-2 border rounded-lg hover:bg-gray-50 text-gray-500">
+              Next
+            </button>
+          </nav>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default VolunteerInfo;
+}
