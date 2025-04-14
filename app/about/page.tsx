@@ -1,13 +1,14 @@
 // pages/about.tsx
 import Link from 'next/link';
 import Image from 'next/image';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
+import { Heart, PieChart, Users } from 'lucide-react';
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-section">
-      <Header />
+      <Navbar />
 
       {/* Hero Section */}
       <div className="bg-gradient-hero text-white py-20">
