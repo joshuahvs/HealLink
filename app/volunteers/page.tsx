@@ -4,22 +4,14 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { authOptions } from '@/lib/authOptions';
 import { getServerSession } from 'next-auth';
+import Navbar from '../components/Navbar';
 
 const VolunteerInfo = async () => {
     const session = await getServerSession(authOptions);
   
     return (
       <div className="bg-gray-50 min-h-screen">
-        <Head>
-          <title>Relawan Medis HealLink - Berikan Dampak di Daerah Terpencil</title>
-        </Head>
-
-      <header className="bg-teal-600 py-6">
-        <div className="container mx-auto px-4">
-          <h1 className="text-white text-3xl font-bold">Relawan Medis HealLink</h1>
-          <p className="text-teal-100 mt-2">Berikan kemampuan medis Anda untuk daerah yang membutuhkan</p>
-        </div>
-      </header>
+        <Navbar />
 
       <main className="container mx-auto px-4 py-8">
         <section className="mb-12">
