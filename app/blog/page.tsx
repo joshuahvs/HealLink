@@ -1,8 +1,8 @@
 // pages/blog.tsx
 import Link from 'next/link';
 import Image from 'next/image';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
 
 export default function BlogPage() {
   const posts = [
@@ -37,7 +37,7 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-section">
-      <Header />
+      <Navbar />
 
       {/* Hero Section */}
       <div className="bg-gradient-hero text-white py-20">
