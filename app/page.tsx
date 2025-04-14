@@ -5,7 +5,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronDown, Heart, PieChart, Users, MapPin } from 'lucide-react';
-// import Header from '../app/components/Header';
 import Footer from '../app/components/Footer';
 import Navbar from './components/Navbar';
 
